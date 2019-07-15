@@ -51,14 +51,28 @@ include Bitcoin::Builder
 prev_hash = "xxx"
 prev_out_index = 0
 prev_tx = Bitcoin::P::Tx.from_json(open("http://test.webbtc.com/tx/#{prev_hash}.json"))
+key = Bitcoin::P::Tx.from_json(open("http://test.webbtc.com/tx/#{pre_hash}.json"))
+key = Bitcoin::Key.from_base58("xxxx")
+new_tx = build_tx do |t|
 
+  t.input do |i|
+    i.prev_out prev_tx
+    i.prev_out_index prev_out_index
+    i.signature_key key
+  end
+  
+  t.output do |o|
+    o.value 50000000
+    o.script {|s| s.recipient "xxx"}
+  end
+  
+  t.output do |o|
+    o.value 49000000
+    o.script {|s| s.recipient key.addr }
+  end
+end
 
-
-
-
-
-
-
+puts new_tx.to_json
 ```
 
 ```sh
